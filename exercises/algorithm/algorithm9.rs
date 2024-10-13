@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,7 +36,19 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.count += 1;
+        self.items.push(value);
+        let mut i = self.count;
+        let mut j = self.parent_idx(i);
+        while j != 0 {
+            if !(self.comparator)(&self.items[j], &self.items[i]) {
+                self.items.swap(i, j);
+                i = j;
+                j = self.parent_idx(i);
+            } else {
+                return;
+            }
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +68,7 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+        self.left_child_idx(idx)
     }
 }
 
@@ -84,8 +94,27 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        if self.is_empty() {
+            return None;
+        }
+
+        let result = self.items.swap_remove(1);
+        self.count -= 1;
+        let mut i = 1;
+        let mut j = self.left_child_idx(i);
+        while j <= self.count {
+            if j + 1 <= self.count && !(self.comparator)(&self.items[j], &self.items[j + 1]) {
+                j += 1;
+            }
+            if !(self.comparator)(&self.items[i], &self.items[j]) {
+                self.items.swap(i, j);
+                i = j;
+                j = self.left_child_idx(i);
+            } else {
+                break;
+            }
+        }
+        Some(result)
     }
 }
 
